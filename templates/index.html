@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Adraxo Remote</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+{% if page == "login" %}
+
+<div class="login-container">
+    <div class="logo">A<span>.</span></div>
+
+    <h1>ADraxo Remote</h1>
+    <p class="subtitle">Your laptop. Your control.</p>
+
+    <div class="panel">
+        <h2>Welcome Back</h2>
+        <p>Sign in to control your laptop remotely.</p>
+
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        <form action="{{ url_for('login') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf }}">
+
+            <label for="password">Access Password</label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+                autocomplete="current-password"
+            >
+
+            <button type="submit" class="primary-btn">
+                Secure Login →
+            </button>
+        </form>
+    </div>
+
+    <footer>SECURED PERSONAL CONTROL PANEL</footer>
+</div>
+
+{% else %}
+
+<div class="dashboard">
+
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo small">A<span>.</span></div>
+            <div>
+                <h2>Adraxo Remote</h2>
+                <p>PERSONAL CONTROL PANEL</p>
+            </div>
+        </div>
+
+        <div class="connection">
+            <span class="status-dot"></span>
+            Server session active
+        </div>
+    </header>
+
+    <main>
+
+        <section class="welcome">
+            <p class="eyebrow">WINDOWS 11 • REMOTE SYSTEM</p>
+            <h1>Welcome back, <span>Adraxo.</span></h1>
+            <p>Manage your laptop from your Android phone.</p>
+        </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="notice {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="device-card">
+            <div class="device-icon">💻</div>
+            <div>
+                <h2>My Laptop</h2>
+                <p>Windows 11 • Remote Control</p>
+            </div>
+            <span class="device-label">CONNECTED TO APP</span>
+        </section>
+
+        <section class="controls">
+            <h2>Power Controls</h2>
+            <p class="section-subtitle">
+                Choose an action for your laptop.
+            </p>
+
+            <div class="control-grid">
+
+                <form action="{{ url_for('action') }}" method="POST"
+                      onsubmit="return confirm('Lock your laptop?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf }}">
+                    <input type="hidden" name="command" value="lock">
+
+                    <button class="control-card lock-card" type="submit">
+                        <span class="control-icon">🔒</span>
+                        <strong>Lock Laptop</strong>
+                        <small>Lock Windows session</small>
+                    </button>
+                </form>
+
+                <form action="{{ url_for('action') }}" method="POST"
+                      onsubmit="return confirm('Restart laptop in 30 seconds?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf }}">
+                    <input type="hidden" name="command" value="restart">
+
+                    <button class="control-card restart-card" type="submit">
+                        <span class="control-icon">🔄</span>
+                        <strong>Restart</strong>
+                        <small>Restart after 30 seconds</small>
+                    </button>
+                </form>
+
+                <form action="{{ url_for('action') }}" method="POST"
+                      onsubmit="return confirm('Shut down laptop in 30 seconds? Save your work first.')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf }}">
+                    <input type="hidden" name="command" value="shutdown">
+
+                    <button class="control-card shutdown-card" type="submit">
+                        <span class="control-icon">⏻</span>
+                        <strong>Shutdown</strong>
+                        <small>Power off after 30 seconds</small>
+                    </button>
+                </form>
+
+                <form action="{{ url_for('action') }}" method="POST"
+                      onsubmit="return confirm('Cancel pending shutdown or restart?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf }}">
+                    <input type="hidden" name="command" value="cancel">
+
+                    <button class="control-card cancel-card" type="submit">
+                        <span class="control-icon">⏹️</span>
+                        <strong>Cancel Power Action</strong>
+                        <small>Cancel countdown</small>
+                    </button>
+                </form>
+
+            </div>
+        </section>
+
+        <section class="security-note">
+            <span>🛡️</span>
+            <div>
+                <strong>Security first</strong>
+                <p>Your panel is password protected. Keep your login credentials private.</p>
+            </div>
+        </section>
+
+        <form action="{{ url_for('logout') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf }}">
+            <button class="logout-btn" type="submit">Log Out</button>
+        </form>
+
+    </main>
+
+    <footer class="dashboard-footer">
+        ADRAXO REMOTE © 2026
+    </footer>
+
+</div>
+
+{% endif %}
+
+</body>
+</html>
